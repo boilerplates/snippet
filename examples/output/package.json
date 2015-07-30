@@ -1,0 +1,40 @@
+{
+  "name": "snippet",
+  "description": "CLI and API for easily creating, reusing, sharing and generating snippets of code from the command line.",
+  "version": "0.1.0",
+  "homepage": "https://github.com/jonschlinkert/snippet",
+  "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
+  "repository": "jonschlinkert/snippet",
+  "bugs": {
+    "url": "https://github.com/jonschlinkert/snippet/issues"
+  },
+  "license": "MIT",
+  "files": [
+    "index.js"
+  ],
+  "main": "index.js",
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "dependencies": {
+    "export-files": "^2.0.1",
+    "isobject": "^2.0.0",
+    "object-visit": "^0.1.0",
+    "ware": "^1.3.0"
+  },
+  "devDependencies": {
+    "ansi-bold": "^0.1.1",
+    "ansi-green": "^0.1.1",
+    "async": "^1.4.0",
+    "glob": "^5.0.14",
+    "mkdirp": "^0.5.1",
+    "mocha": "*",
+    "should": "*",
+    "success-symbol": "^0.1.0"
+  },
+  "keywords": [],
+  "foo": "bar"
+}
