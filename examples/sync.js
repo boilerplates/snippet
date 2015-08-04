@@ -26,10 +26,23 @@ readers.register('b', function (fp) {
 
 readers.register('c', function (fp) {
   return this.fns.b(fp) + '\nccc';
-});
+})
 
-var res = readers.fns.c('.verb.md');
-// console.log(res);
+// var res = readers.fns.c('.verb.md');
+// // console.log(res);
 
-var res = readers.read('c', '.verb.md');
-console.log(res);
+var result = readers.read('c', '.verb.md')
+  .use(function (val) {
+    return val + 1;
+  })
+  .use(function (val) {
+    return val + 2;
+  })
+  .use(function (val) {
+    return val + 3;
+  })
+  .use(function (val) {
+    return val + 4;
+  })
+
+console.log(result);

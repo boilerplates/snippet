@@ -6,12 +6,15 @@ var success = require('success-symbol');
 var green = require('ansi-green');
 var bold = require('ansi-bold');
 var mkdir = require('mkdirp');
+var Fetch = require('fetch-files');
 var Base = require('../lib/base');
 
 function App(options) {
+  Fetch.call(this, options);
   this.options = options || {};
   this.init(this.options);
 }
+Fetch.extend(App);
 
 App.prototype.init = function(opts) {
   this.create('reader', 'read', opts);
@@ -22,26 +25,23 @@ App.prototype.init = function(opts) {
 App.prototype.create = function(name, method, options) {
   var base = new Base(name, options);
 
-  this.decorate(name, function(key) {
+  this.mixin(name, function(key) {
     base.register.apply(base, arguments);
     return this;
   });
-
-  this.decorate('use', function(key) {
-    base.use.apply(base, arguments);
-    return this;
-  });
-
-  this.decorate(method, function(key) {
+  this.mixin(method, function(key) {
     return base.run.apply(base, arguments);
   });
 };
 
-App.prototype.decorate = function(name, fn) {
+App.prototype.mixin = function(name, fn) {
   App.prototype[name] = fn;
+  return this;
 };
 
 var app = new App({cwd: '.', destBase: 'examples/output'});
+
+
 
 /**
  * sync readers
@@ -100,19 +100,6 @@ var json = app.run('json', buffer);
 var obj = app.run('update', json);
 var pkg = app.run('stringify', obj);
 
-//   app.use(function (val) {
-//     console.log(val)
-//     return val;
-//   })
-//   app.use(function (val) {
-//     console.log(val)
-//     return val;
-//   })
-//   app.use(function (val) {
-//     console.log(val)
-//     return val;
-//   })
-
 app.write('dest', 'package.json', pkg);
 
 
@@ -120,71 +107,72 @@ app.write('dest', 'package.json', pkg);
  * async readers
  */
 
-// app.reader('buffer', function (fp, cb) {
-//   return fs.readFile(fp, function (err, res) {
-//     if (err) return cb(err);
-//     cb(null, res);
-//   });
-// });
+app.reader('buffer', function (fp, cb) {
+  return fs.readFile(fp, function (err, res) {
+    if (err) return cb(err);
+    cb(null, res);
+  });
+});
 
-// app.reader('file', function (fp, cb) {
-//   return this.buffer(fp, function (err, buffer) {
-//     if (err) return cb(err);
+app.reader('file', function (fp, cb) {
+  return this.buffer(fp, function (err, buffer) {
+    if (err) return cb(err);
 
-//     cb(null, buffer.toString());
-//   })
-// });
+    cb(null, buffer.toString());
+  })
+});
 
-// /**
-//  * async plugins
-//  */
+/**
+ * async plugins
+ */
 
-// app.plugin('all-in-one', function (buffer, cb) {
-//   var json = this.json(buffer);
-//   var updated = this.update(json);
-//   cb(null, this.stringify(updated));
-// });
-
-
-// /**
-//  * async writers
-//  */
+app.plugin('all-in-one', function (buffer, cb) {
+  var json = this.json(buffer);
+  var updated = this.update(json);
+  cb(null, this.stringify(updated));
+});
 
 
-// app.writer('prep', function (dest, cb) {
-//   if (this.options.cwd) {
-//     dest = path.join(this.options.cwd, dest);
-//   }
-
-//   var dir = path.dirname(dest);
-//   fs.exists(dir, function (exists) {
-//     if (exists) return cb(null, dest);
-
-//     mkdir(dir, function (err) {
-//       if (err) return cb(err);
-//       cb(null, dest);
-//     });
-//   });
-// });
-
-// app.writer('dest', function (dest, contents, cb) {
-//   this.prep(dest, function (err, fp) {
-//     if (err) return cb(err);
-
-//     fs.writeFile(fp, contents, cb);
-//     console.log(green(success), 'file written to', bold(dest));
-//   });
-// });
+/**
+ * async writers
+ */
 
 
-// app.read('file', 'package.json', function (err, res) {
-//   if (err) return console.error(err);
+app.writer('prep', function (dest, cb) {
+  if (this.options.cwd) {
+    dest = path.join(this.options.cwd, dest);
+  }
 
-//   app.run('all-in-one', res, function (err, str) {
-//     if (err) return console.error(err);
+  var dir = path.dirname(dest);
+  fs.exists(dir, function (exists) {
+    if (exists) return cb(null, dest);
 
-//     app.write('dest', 'package.json', str, function (err) {
-//       if (err) return console.error(err);
-//     });
-//   })
-// });
+    mkdir(dir, function (err) {
+      if (err) return cb(err);
+      cb(null, dest);
+    });
+  });
+});
+
+app.writer('dest', function (dest, contents, cb) {
+  this.prep(dest, function (err, fp) {
+    if (err) return cb(err);
+
+    fs.writeFile(fp, contents, cb);
+    console.log(green(success), 'file written to', bold(dest));
+  });
+});
+
+
+app.read('file', 'package.json', function (err, res) {
+  if (err) return console.error(err);
+  console.log(res)
+
+  app.run('all-in-one', res, function (err, str) {
+    if (err) return console.error(err);
+
+    app.write('dest', 'package.json', str, function (err) {
+      if (err) return console.error(err);
+    });
+  })
+});

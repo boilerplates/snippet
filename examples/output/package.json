@@ -13,6 +13,10 @@
     "index.js"
   ],
   "main": "index.js",
+  "preferGlobal": true,
+  "bin": {
+    "snippet": "bin/snippet.js"
+  },
   "engines": {
     "node": ">=0.10.0"
   },
@@ -20,9 +24,23 @@
     "test": "mocha"
   },
   "dependencies": {
+    "ansi-red": "^0.1.1",
+    "braces": "^1.8.0",
+    "collection-visit": "^0.1.0",
+    "data-store": "^0.8.0",
+    "emmet": "^1.3.1",
+    "error-symbol": "^0.1.0",
     "export-files": "^2.0.1",
+    "extend-shallow": "^2.0.1",
+    "get-value": "^1.1.5",
     "isobject": "^2.0.0",
+    "lazy-cache": "^0.1.0",
+    "map-visit": "^0.1.0",
+    "minimist": "^1.1.2",
     "object-visit": "^0.1.0",
+    "object.omit": "^2.0.0",
+    "set-value": "^0.2.0",
+    "starts-with": "^1.0.2",
     "ware": "^1.3.0"
   },
   "devDependencies": {

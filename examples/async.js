@@ -54,5 +54,8 @@ readers.read('c', '.verb.md', function (err, res) {
 // var thisArg = readers.read('c', '.verb.md', function (err, res) {
 //   console.log(res);
 // });
+// var thisArg = readers.read('c', '.verb.md', function (err, res) {
+//   console.log(res);
+// });
 
 // console.log(thisArg);
