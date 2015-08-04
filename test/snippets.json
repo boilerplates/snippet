@@ -1,0 +1,12 @@
+{
+  "a": {
+    "name": "foo",
+    "contents": "bar",
+    "path": "foo"
+  },
+  "b": {
+    "name": "foo",
+    "contents": "bar",
+    "path": "foo"
+  }
+}

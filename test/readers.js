@@ -32,7 +32,7 @@ describe('sync', function () {
       });
 
       var actual = readers.read('buffer', 'LICENSE');
-      assert.equal(Buffer.isBuffer(actual), true);
+      assert.equal(Buffer.isBuffer(actual.value), true);
     });
 
     it('should allow readers to use other readers:', function () {
@@ -45,8 +45,8 @@ describe('sync', function () {
       });
 
       var actual = readers.read('file', 'LICENSE');
-      assert.equal(Buffer.isBuffer(actual), false);
-      assert.equal(typeof actual === 'string', true);
+      assert.equal(Buffer.isBuffer(actual.value), false);
+      assert.equal(typeof actual.value === 'string', true);
     });
   });
 });

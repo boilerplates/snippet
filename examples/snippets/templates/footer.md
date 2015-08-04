@@ -1,0 +1,1 @@
+Generated on <%= new Date() %>
