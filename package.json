@@ -13,6 +13,10 @@
     "index.js"
   ],
   "main": "index.js",
+  "preferGlobal": true,
+  "bin": {
+    "snippet": "bin/snippet.js"
+  },
   "engines": {
     "node": ">=0.10.0"
   },
@@ -20,21 +24,49 @@
     "test": "mocha"
   },
   "dependencies": {
+    "ansi-gray": "^0.1.1",
+    "ansi-red": "^0.1.1",
+    "braces": "^1.8.0",
+    "collection-visit": "^0.1.0",
+    "copy": "^0.1.1",
+    "data-store": "^0.8.0",
+    "detect-conflicts": "^0.1.0",
+    "diff": "^1.4.0",
+    "easy-renamer": "^0.2.0",
+    "emmet": "^1.3.1",
+    "engine": "^0.1.4",
+    "error-symbol": "^0.1.0",
     "export-files": "^2.0.1",
-    "isobject": "^2.0.0",
-    "object-visit": "^0.1.0",
-    "ware": "^1.3.0"
+    "extend-shallow": "^2.0.1",
+    "get-value": "^1.1.5",
+    "globby": "^2.1.0",
+    "inject-snippet": "^0.1.0",
+    "inquirer": "^0.9.0",
+    "lazy-cache": "^0.1.0",
+    "lazy-globby": "^0.1.1",
+    "minimist": "^1.1.2",
+    "object.omit": "^2.0.0",
+    "question-cache": "^0.1.3",
+    "question-helper": "^0.2.3",
+    "relative": "^3.0.1",
+    "rewrite-ext": "^0.2.0",
+    "set-value": "^0.2.0",
+    "starts-with": "^1.0.2",
+    "word-wrap": "^1.1.0",
+    "write": "^0.2.1"
   },
   "devDependencies": {
     "ansi-bold": "^0.1.1",
+    "ansi-cyan": "^0.1.1",
     "ansi-green": "^0.1.1",
+    "ansi-yellow": "^0.1.1",
     "async": "^1.4.0",
+    "engine": "^0.1.3",
     "glob": "^5.0.14",
     "mkdirp": "^0.5.1",
     "mocha": "*",
     "should": "*",
     "success-symbol": "^0.1.0"
   },
-  "keywords": [],
-  "foo": "bar"
+  "keywords": []
 }
