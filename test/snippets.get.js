@@ -14,17 +14,16 @@ describe('snippets', function () {
 
   it('should get a snippet from the snippet store:', function () {
     snippets.save('a', {path: 'foo'});
-    snippets.get('a').should.have.properties('name', 'contents', 'path');
+    snippets.get('a').should.have.properties('name', 'content', 'path');
   });
 
   it('should get a snippet from memory:', function () {
     snippets.set('b', {path: 'foo'});
-    snippets.get('b').should.have.properties('path', 'contents');
+    snippets.get('b').should.have.properties('path', 'content');
   });
 
   it('should get a snippet from a file:', function () {
     var actual = snippets.get('./test/fixtures/a.hbs');
-    console.log(actual);
-    actual.should.have.properties('contents', 'path');
+    actual.should.have.properties('content', 'path');
   });
 });

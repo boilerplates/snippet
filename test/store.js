@@ -19,7 +19,6 @@ describe('snippets', function () {
 
   it('should get a stored item with `.get`:', function () {
     snippets.store.set('b', {path: 'foo', contents: 'bar'});
-    console.log(snippets.get('b'))
     snippets.get('b').should.have.properties('path', 'contents', 'name');
   });
 });
