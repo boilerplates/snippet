@@ -1,6 +1,4 @@
-
-
-var _ = require('lodash');
+var engine = require('engine');
 var Snippets = require('..');
 
 var snippets = new Snippets({
@@ -21,7 +19,7 @@ var snippet = snippets
   })
   .use(function (contents) {
     var str = contents.toString();
-    return _.template(str)(this.data);
+    return engine.render(str, this.data);
   })
   .write('test/actual/', function (err) {
     if (err) console.log(err);

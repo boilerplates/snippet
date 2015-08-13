@@ -3,6 +3,15 @@
 module.exports = {
   src: 'templates/*.md',
 
+  options: {
+    rename: {
+
+    },
+    renameKey: function () {
+
+    }
+  }
+
   snippets: {
     foo: {
       path: '../foo',
