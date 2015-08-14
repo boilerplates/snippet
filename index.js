@@ -6,7 +6,7 @@
  */
 
 'use strict';
-require('time-require');
+// require('time-require');
 
 var url = require('url');
 
@@ -15,20 +15,16 @@ var url = require('url');
  */
 
 var lazy = require('lazy-cache')(require);
-lazy.glob = lazy('globby');
-lazy.visit = lazy('collection-visit');
-lazy.startsWith = lazy('starts-with');
+var delegate = require('delegate-properties');
+var extend = require('extend-shallow');
 lazy.FetchFiles = lazy('fetch-files');
 lazy.DataStore = lazy('data-store');
-lazy.omit = lazy('object.omit');
-lazy.set = lazy('set-value');
-lazy.get = lazy('get-value');
+lazy.glob = lazy('globby');
 
 /**
  * Local dependencies
  */
 
-// var Generate = require('generate');
 var Snippet = require('./lib/snippet');
 var expand = require('./lib/expand');
 var utils = require('./lib/utils');
@@ -41,71 +37,115 @@ var utils = require('./lib/utils');
  */
 
 function Snippets(options) {
-  // Generate.call(this, options);
   this.options = options || {};
   this.store = store(this.options);
 
   this.snippets = {};
+  this.presets = {};
   this.cache = {};
   this.cache.data = {};
 
   var FetchFiles = lazy.FetchFiles();
   this.downloader = new FetchFiles(this.options);
   this.presets = this.downloader.presets;
-  this.defaultConfig();
 
   if (typeof this.options.templates === 'object') {
     this.visit('set', this.options.templates);
   }
 }
 
-// Generate.extend(Snippets);
-// Template.extend(Snippets);
-
 /**
  * Snippets prototype methods
  */
 
-utils.delegate(Snippets.prototype, {
+delegate(Snippets.prototype, {
   constructor: Snippets,
 
-  defaultConfig: function () {
-  },
+  /**
+   * Cache a snippet or arbitrary value in memory.
+   *
+   * @param  {String} `name` The snippet name
+   * @param  {any} `val`
+   * @return {Object} Returns the `Snippet` instance for chaining
+   * @api public
+   */
 
-  set: function (prop, val) {
-    if (typeof prop === 'object') {
-      return this.visit('set', prop);
+  set: function (name, val) {
+    if (typeof name === 'object') {
+      return this.visit('set', name);
     }
-    var set = lazy.set();
-    set(this.snippets, prop, val);
-    return this;
-  },
-
-  save: function (prop, val) {
-    if (typeof prop === 'object') {
-      return this.visit('save', prop);
-    }
-    this.store.set(prop, val);
+    utils.set(this.snippets, name, val);
     return this;
   },
 
   /**
-   * Get a cached or persisted snippet by name.
+   * Cache a snippet in memory. Creates a `Snippet` instance
+   * with the given `value`.
+   *
+   *
+   * @param  {String} `name` The snippet name
+   * @param  {any} `val`
+   * @return {Object} Returns the `Snippet` instance for chaining
+   * @api public
+   */
+
+  addSnippet: function (name, val) {
+    if (typeof name === 'object') {
+      return this.visit('set', name);
+    }
+    utils.set(this.snippets, name, new Snippet(val));
+    return this;
+  },
+
+  /**
+   * Create a `new Snippet()` from a snippet object,
+   * or array of snippet objects.
+   *
+   * @param {Object|Array} `snippets`
+   * @api public
+   */
+
+  addSnippets: function (snippets) {
+    this.visit('addSnippet', snippets);
+    return this;
+  },
+
+  /**
+   * Persist a snippet or arbitrary value to disk.
+   *
+   * @param  {String} `name`
+   * @param  {any} `val`
+   * @return {Object} Returns the `Snippet` instance for chaining
+   * @api public
+   */
+
+  save: function (name, val) {
+    if (typeof name === 'object') {
+      return this.visit('save', name);
+    }
+    this.store.set(name, val);
+    return this;
+  },
+
+  /**
+   * Get a snippet or arbitrary value by `name`. Cached,
+   * local, or remote.
    *
    * @param  {String} `name`
    * @param  {Object} `preset` Preset to use if a URL is passed.
-   * @return {Object}
+   * @return {Object} Returns the requested snippet.
+   * @api public
    */
 
   get: function (name, preset) {
     if(typeof name !== 'string') {
       throw new TypeError('snippets#get expects `name` to be a string.');
     }
-    var startsWith = lazy.startsWith();
-    if (startsWith(name, './')) {
+    if (utils.startsWith(name, './')) {
       return this.read(name);
     }
-    // ://
+
+    // ex: `http(s)://api.github.com/...`
     if (/^\w+:\/\//.test(name) || preset) {
       var snippet = this.downloader
         .fetch(name, preset)
@@ -116,12 +156,35 @@ utils.delegate(Snippets.prototype, {
       return new Snippet(snippet);
     }
 
-    var get = lazy.get();
     var res = this.snippets[name]
       || this.store.get(name)
-      || get(this.snippets, name);
+      || utils.get(this.snippets, name);
     return new Snippet(res);
   },
+
+  /**
+   * Delete snippet `name` from memory and/or snippet-store.
+   * This will not delete actual snippet files saved on disk, only
+   * cached snippets.
+   *
+   * @param {String} `name` The name of the snippet to delete
+   * @return {Object} `Snippets` instance, for chaining
+   * @api public
+   */
+
+  del: function (prop) {
+    utils.omit(this.snippets, prop);
+    this.store.del(prop);
+    return this;
+  },
+
+  /**
+   * Load a glob of snippets.
+   * @param  {String|Array} `snippets
+   * @param  {Object} `options`
+   * @return {Object} `Snippets` for chaining
+   * @api public
+   */
 
   load: function (snippets, options) {
     if (typeof snippets === 'string') {
@@ -135,9 +198,48 @@ utils.delegate(Snippets.prototype, {
     return this;
   },
 
-  addSnippets: function (snippets) {
-    this.visit('set', snippets);
-    return this;
+  /**
+   * Read a snippet from the file system. If the snippet is already
+   * in memory and is an instance of `Snippet`, the `.read()` method
+   * is called on the snippet. Otherwise, a `new Snippet()` is created
+   * first before calling the `.read()` method on the snippet.
+   *
+   * @param  {Object|String} snippet
+   * @return {Object}
+   * @api public
+   */
+
+  read: function (snippet) {
+    if(typeof snippet === 'string') {
+      snippet = new Snippet({path: snippet});
+    }
+    snippet.read();
+    return snippet;
+  },
+
+  /**
+   * Set a preset `config` for downloading snippets from a remote URL.
+   * @param  {String} `name`
+   * @param  {Object} `config`
+   * @return {Object}
+   */
+
+  preset: function(name, config) {
+    return this.downloader.preset(name, config);
+  },
+
+  /**
+   * Queue a remote snippet to be downloaded from the given URL, and
+   * optional `preset`.
+   *
+   * @param  {String} `url`
+   * @param  {Object} `preset` The name
+   * @return {Object} Returns a snippet object.
+   * @api public
+   */
+
+  queue: function (url, config) {
+    return this.downloader.fetch(this.downloader, arguments);
   },
 
   /**
@@ -146,44 +248,35 @@ utils.delegate(Snippets.prototype, {
    * @param  {String} `url`
    * @param  {Object} `preset`
    * @return {Object} Returns a snippet object.
+   * @api public
    */
 
-  fetch: function (url, preset) {
-    return this.downloader.fetch(url, {preset: preset});
-  },
-
-  download: function () {
+  fetch: function () {
     return this.downloader.download(this.downloader, arguments);
   },
 
-  read: function (snippet) {
-    if(typeof snippet === 'string') {
-      snippet = new Snippet({path: snippet});
-    }
-    return snippet.read();
-  },
+  /**
+   * Expand a snippet of code or data.
+   *
+   * @param  {String} `str`
+   * @param  {Object} `data
+   * @api public
+   */
 
   expand: function (str, data) {
     return expand(str, data);
   },
 
-  prepend: function (str, content) {
-    return utils.prepend(str, content);
+  prepend: function (name, target, opts) {
+    return this.get(name).prepend(target);
   },
 
-  append: function (str, content) {
-    return utils.append(str, content);
+  append: function (name, target, opts) {
+    return this.get(name).append(target);
   },
 
-  inject: function (str, marker) {
-    return utils.inject(str, this.contents, marker);
-  },
-
-  del: function (prop) {
-    var omit = lazy.omit();
-    omit(this.snippets, prop);
-    this.store.del(prop);
-    return this;
+  inject: function (name, target, opts) {
+    return this.get(name).inject(target, opts);
   },
 
   mixin: function (key, val) {
@@ -192,16 +285,20 @@ utils.delegate(Snippets.prototype, {
   },
 
   visit: function (method, val) {
-    var visit = lazy.visit();
-    visit(this, method, val);
+    utils.visit(this, method, val);
     return this;
   }
 });
 
+/**
+ * Initialize `DataStore`
+ */
+
 function store(options) {
   options = options || {};
   var DataStore = lazy.DataStore();
-  return new DataStore('snippets', options.store || {});
+  var opts = extend(options.store || {});
+  return new DataStore('snippets', opts);
 }
 
 /**
