@@ -32,7 +32,7 @@ var snippet = require('snippet');
 
 ### Emmet
 
-_(WIP!)_
+_(WIP! This is just one feature of `Snippet`! A lot more is on the way!)_
 
 **Expand [emmet](https://github.com/emmetio/emmet#readme) snippets**
 
