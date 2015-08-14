@@ -8,7 +8,7 @@
 * [x] expand emmet snippets in the command line.
 * [x] set, get, and delete snippets of code or data that can easily be reused in any project
 * [ ] fetch snippets from github or other remotes using `presets`
-* [x] render snippets using data from `json` or `yaml` files, or using [expand-object][]
+* [x] render snippets using data from `json` or `yaml` files, or using [expand-object](https://github.com/jonschlinkert/expand-object)
 * [x] inject snippets into other files using customizable markers
 * [x] prepend files/strings with snippets
 * [x] append files/strings with snippets
@@ -34,7 +34,7 @@ var snippet = require('snippet');
 
 _(WIP!)_
 
-**Expand [emmet][] snippets**
+**Expand [emmet](https://github.com/emmetio/emmet#readme) snippets**
 
 ```js
 snippets.expand('ul>li.item$*3');
