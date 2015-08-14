@@ -10,12 +10,8 @@ var snippet = snippets
     first: 'Jon',
     last: 'Schlinkert'
   })
-//   .use(function (contents) {
-//     var str = contents.toString();
-//     return _.template(str)(this.data);
-//   })
   .write('test/actual/', function (err) {
     if (err) console.log(err);
+    console.log('success!');
   });
 
-console.log(snippet);

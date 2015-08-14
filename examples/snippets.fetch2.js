@@ -10,10 +10,10 @@ snippets.downloader.preset('github', {
 });
 
 snippets.downloader
-  .fetch('/assemble/assemble/v0.6.0/.verb.md', {preset: 'github'})
-  .fetch('/jonschlinkert/template/master/.verb.md', {preset: 'github'})
-  .fetch('/verbose/verb/master/.verb.md', {preset: 'github'})
+  .queue('/assemble/assemble/v0.6.0/.verb.md', {preset: 'github'})
+  .queue('/jonschlinkert/template/master/.verb.md', {preset: 'github'})
+  .queue('/verbose/verb/master/.verb.md', {preset: 'github'})
   // .dest('.verb.md')
-  .download(function (err) {
+  .fetch(function (err) {
     if (err) console.error(err);
   })
