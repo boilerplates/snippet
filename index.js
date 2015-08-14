@@ -32,6 +32,10 @@ var utils = require('./lib/utils');
 /**
  * Create an instance of `Snippets` with the given options.
  *
+ * ```js
+ * var Snippets = require('snippets');
+ * var snippets = new Snippets();
+ * ```
  * @param {Object} `options`
  * @api public
  */
@@ -67,6 +71,7 @@ delegate(Snippets.prototype, {
    * @param  {String} `name` The snippet name
    * @param  {any} `val`
    * @return {Object} Returns the `Snippet` instance for chaining
+   * @name .set
    * @api public
    */
 
@@ -86,6 +91,7 @@ delegate(Snippets.prototype, {
    * @param  {String} `name` The snippet name
    * @param  {any} `val`
    * @return {Object} Returns the `Snippet` instance for chaining
+   * @name .addSnippet
    * @api public
    */
 
@@ -102,6 +108,7 @@ delegate(Snippets.prototype, {
    * or array of snippet objects.
    *
    * @param {Object|Array} `snippets`
+   * @name .addSnippets
    * @api public
    */
 
@@ -116,6 +123,7 @@ delegate(Snippets.prototype, {
    * @param  {String} `name`
    * @param  {any} `val`
    * @return {Object} Returns the `Snippet` instance for chaining
+   * @name .save
    * @api public
    */
 
@@ -134,6 +142,7 @@ delegate(Snippets.prototype, {
    * @param  {String} `name`
    * @param  {Object} `preset` Preset to use if a URL is passed.
    * @return {Object} Returns the requested snippet.
+   * @name .get
    * @api public
    */
 
@@ -169,6 +178,7 @@ delegate(Snippets.prototype, {
    *
    * @param {String} `name` The name of the snippet to delete
    * @return {Object} `Snippets` instance, for chaining
+   * @name .del
    * @api public
    */
 
@@ -183,6 +193,7 @@ delegate(Snippets.prototype, {
    * @param  {String|Array} `snippets
    * @param  {Object} `options`
    * @return {Object} `Snippets` for chaining
+   * @name .load
    * @api public
    */
 
@@ -206,6 +217,7 @@ delegate(Snippets.prototype, {
    *
    * @param  {Object|String} snippet
    * @return {Object}
+   * @name .read
    * @api public
    */
 
@@ -222,6 +234,8 @@ delegate(Snippets.prototype, {
    * @param  {String} `name`
    * @param  {Object} `config`
    * @return {Object}
+   * @name .preset
+   * @api public
    */
 
   preset: function(name, config) {
@@ -235,6 +249,7 @@ delegate(Snippets.prototype, {
    * @param  {String} `url`
    * @param  {Object} `preset` The name
    * @return {Object} Returns a snippet object.
+   * @name .queue
    * @api public
    */
 
@@ -248,6 +263,7 @@ delegate(Snippets.prototype, {
    * @param  {String} `url`
    * @param  {Object} `preset`
    * @return {Object} Returns a snippet object.
+   * @name .fetch
    * @api public
    */
 
@@ -260,6 +276,7 @@ delegate(Snippets.prototype, {
    *
    * @param  {String} `str`
    * @param  {Object} `data
+   * @name .expand
    * @api public
    */
 
